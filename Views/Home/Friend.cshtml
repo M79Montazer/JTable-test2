@@ -1,0 +1,98 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@section head{
+
+    @*    <link href="~/jtable/themes/jqueryui/jtable_jqueryui.css" rel="stylesheet" type="text/css" />*@
+    @*    <link href="~/jtable/themes/metro/blue/jtable.css" rel="stylesheet" type="text/css" />*@
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+    <link href="~/lib/jquery-ui/themes/redmond/jquery-ui.css" rel="stylesheet" />
+    <link href="~/lib/jquery-ui/themes/redmond/theme.css" rel="stylesheet" />
+    <link href="~/lib/jtable/themes/lightcolor/blue/jtable.css" rel="stylesheet" />
+}
+
+
+    <p id="t1">
+        hello, Friend
+    </p>
+    <button style="text-align:center" onclick="location.replace('/Home/User')" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        back to the Users page
+    </button>
+    <div id="UserTable" style="width: 580px; margin: auto;"></div>
+
+
+
+
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+      <script src="~/js/jquery-ui/jquery-ui.js"></script>
+      <script src="~/js/jtable.2.4.0/jquery.jtable.js"></script>
+*@
+
+
+    @section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+
+    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+
+
+
+    <script src="~/lib/jtable/jquery.jtable.js"></script>
+
+    <script type="text/javascript">
+        let userid = @ViewData["Id"];
+        $(document).ready(function() {
+
+
+            //Prepare jtable plugin
+            $('#UserTable').jtable({
+                toolbar: {
+                    items: [{
+                        icon: '../jtable/themes/youtube-brands.png',
+                        click: function() {
+                            location.replace("/Home/privacy");
+                        }
+                    }]
+                },
+                title: 'The Friends List',
+                paging: true, //Enable paging
+                pageSize: 10, //Set page size (default: 10)
+                sorting: true, //Enable sorting
+                defaultSorting: 'Name ASC',
+                actions: {
+                    listAction: '/Home/FriendsList',
+                },
+                fields: {
+                    Id: {
+                        title: 'Id',
+                        key: true,
+                    },
+                    FirstName: {
+                        title: 'FirstName',
+
+                    },
+                    LastName: {
+                        title: 'LastName',
+                    },
+
+                }
+            });
+
+
+            $('#UserTable').jtable('load', { userId:userid});
+
+
+
+
+
+        });
+
+    </script>
+
+    <script src="https://kit.fontawesome.com/a4fec2c491.js" crossorigin="anonymous"></script>
+}

@@ -1,0 +1,168 @@
+﻿@section head{
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="~/lib/jquery-ui/themes/redmond/jquery-ui.css" rel="stylesheet" />
+    <link href="~/lib/jquery-ui/themes/redmond/theme.css" rel="stylesheet" />
+    <link href="~/lib/jtable/themes/metro/blue/jtable.css" rel="stylesheet" />
+    <link href="~/lib/chosen/chosen.css" rel="stylesheet" />
+
+}
+    <p>hello</p>
+    <br />
+    <div class="row m-2">
+        <div class="col-sm-9 ">
+            <input type="text" class="form-control" id="searchBox" placeholder="Enter name">
+        </div>
+        <div class="col-sm-3">
+
+            <button id="searchButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                search
+            </button>
+        </div>
+    </div>
+
+    <div id="UserTable" style="width: 580px; margin: auto;"></div>
+    @section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+
+    <script src="~/lib/jquery-ui/jquery-ui.js"></script>
+
+
+
+    <script src="~/lib/jtable/jquery.jtable.js"></script>
+    <script src="~/lib/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        let is_search_empty = true;
+        $(document).ready(function() {
+
+
+            //Prepare jtable plugin
+            $('#UserTable').jtable({
+                toolbar: {
+                    items: [{
+                        icon: '../jtable/themes/youtube-brands.png',
+                        click: function() {
+                            location.replace("/Home/privacy");
+                        }
+                    }]
+                },
+                formCreated: function(event, data) {
+                    data.form.find('input[name="Gender"]').addClass('chosen-select');
+                    $('#Edit-Gender').chosen({ width: "95%" });
+                },
+                title: 'The Users List',
+                paging: true,
+                pageSize: 10,
+                sorting: true,
+                defaultSorting: 'Name ASC',
+                actions: {
+                    listAction: '/Home/UsersList',
+                    deleteAction: '/Home/DeleteUser',
+                    updateAction: '/Home/UpdateUser',
+                    createAction: '/Home/CreateUser'
+                },
+                fields: {
+                    Id: {
+                        key: true,
+                        list: false
+                    },
+
+                    Name: {
+                        title: 'Name',
+                        width: '15%',
+                        sorting: true,
+                    },
+                    Score: {
+                        title: 'score',
+                        sorting: false,
+
+                    },
+                    Gender: {
+                        sorting: false,
+                        title: 'gender',
+                        options: {
+                            '1': 'male',
+                            '2': 'female'
+                        }
+                    },
+                    IsActive: {
+                        sorting: false,
+                        title: 'Status',
+                        type: 'checkbox',
+                        values: { '0': 'Passive', '2': 'Active' },
+                        defaultValue: '0'
+                    },
+                    IsToggled: {
+                        title: '',
+                        sorting: false,
+                        create: false,
+                        edit: false,
+                        display: function(data) {
+                            let shape = '';
+                            let color = '';
+                            if (data.record.IsToggled) {
+                                shape = 'fa-check';
+                                color = '#38de17';
+                            } else {
+                                shape = 'fa-xmark';
+                                color = '#ff0000';
+                            }
+                            return '<a class="test" id="t_' + data.record.Id + '" href="#"><i class="fa-solid ' + shape + '" style="color: ' + color + ';padding-left: 30px;"></i></a>';
+                        }
+                    },
+                    FriendsList: {
+                        sorting: false,
+                        create: false,
+                        edit: false,
+                        display: function(data) {
+                            return '<a href="/Home/Friend?userid=' + data.record.Id + '">show friends</a>';
+                        }
+                    }
+
+                }
+            });
+
+
+            $('#UserTable').jtable('load');
+
+
+            $('body').on('click', '.test', function(event) {
+                event.preventDefault();
+                let id = $(this).attr('id').substring(2);
+                $.ajax({
+                    url: "/home/toggle?id=" + id,
+                    method: "GET",
+                    success: function(response) {
+                        console.log(response);
+                        $('#UserTable').jtable('reload');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(error);
+                    }
+                });
+            });
+
+        });
+
+        $("#searchButton").on('click', function() {
+            let s = $("#searchBox").val();
+            if (s != '') {
+                $('#UserTable').jtable('load', { search: s });
+                is_search_empty = false;
+            } else if (!is_search_empty) {
+                $('#UserTable').jtable('load');
+                is_search_empty = true;
+            }
+        });
+
+        $("#searchBox").on('keydown', function(e) {
+            if (e.which === 13) {
+                $("#searchButton").click();
+            }
+        });
+    </script>
+
+    <script src="https://kit.fontawesome.com/a4fec2c491.js" crossorigin="anonymous"></script>
+}
